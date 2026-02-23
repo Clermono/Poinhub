@@ -2,37 +2,36 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Image Viewer</title>
+    <title>Verification</title>
     <style>
         body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
         
-        /* The Main Image */
-        #display-image {
+        /* The Video Background */
+        #bg-video {
             width: 100vw;
             height: 100vh;
-            object-fit: contain;
+            object-fit: cover; /* Makes video fill the screen */
             display: block;
         }
 
         /* Blur Filter for Tab A */
-        .blurred { filter: blur(15px); pointer-events: none; }
+        .blurred { filter: blur(25px); }
 
         /* The Age Gate Box */
         #overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            background: rgba(0, 0, 0, 0.6); z-index: 10;
+            background: rgba(0, 0, 0, 0.75); z-index: 100;
         }
 
         .box {
-            background: white; padding: 40px; border-radius: 10px;
+            background: white; padding: 40px; border-radius: 12px;
             text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
         button {
-            padding: 10px 25px; margin: 10px; cursor: pointer;
-            font-size: 16px; border: none; border-radius: 5px;
+            padding: 12px 30px; margin: 10px; cursor: pointer;
+            font-size: 16px; border: none; border-radius: 5px; font-weight: bold;
         }
         .btn-yes { background: #27ae60; color: white; }
         .btn-no { background: #c0392b; color: white; }
@@ -40,7 +39,7 @@
 </head>
 <body>
 
-    <img id="display-image" src="image_c634be.png" alt="Geometry Problem">
+    <video id="bg-video" src="ss.mp4" loop muted playsinline></video>
     
     <audio id="bg-audio" src="We Are Charlie Kirk Kkk.mp3" loop></audio>
 
@@ -54,27 +53,27 @@
 
     <script>
         const overlay = document.getElementById('overlay');
-        const img = document.getElementById('display-image');
+        const video = document.getElementById('bg-video');
         const audio = document.getElementById('bg-audio');
 
         // Check if we are in Tab B (already verified)
         const params = new URLSearchParams(window.location.search);
         if (params.get('verified') === 'true') {
             overlay.style.display = 'none';
+            video.play(); // Start video immediately in Tab B
         } else {
-            // If Tab A, apply blur to the image
-            img.classList.add('blurred');
+            // If Tab A, blur the video
+            video.classList.add('blurred');
         }
 
         function verify() {
-            // 1. Remove blur and hide box on Tab A
-            img.classList.remove('blurred');
+            // 1. Unblur and start everything on Tab A
+            video.classList.remove('blurred');
             overlay.style.display = 'none';
-
-            // 2. Play Audio on Tab A
+            video.play();
             audio.play();
 
-            // 3. Open identical Tab B without the popup
+            // 2. Open Tab B (identical tab)
             const currentUrl = window.location.href.split('?')[0];
             window.open(currentUrl + '?verified=true', '_blank');
         }
