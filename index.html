@@ -2,52 +2,66 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Pornhub</title>
+    <title>Poinhub</title>
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        body, html { 
+            margin: 0; padding: 0; height: 100%; overflow: hidden; 
+            background: #000; font-family: 'Arial', sans-serif;
+            cursor: auto; /* Normal cursor at start */
+        }
         
-        /* The Video Background */
+        /* Class to hide cursor after interaction */
+        .no-cursor, .no-cursor * { cursor: none !important; }
+
         #bg-video {
             width: 100vw;
             height: 100vh;
-            object-fit: cover; /* Makes video fill the screen */
+            object-fit: cover;
             display: block;
         }
 
-        /* Blur Filter for Tab A */
-        .blurred { filter: blur(25px); }
+        .blurred { filter: blur(35px); }
 
-        /* The Age Gate Box */
         #overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; align-items: center; justify-content: center;
-            background: rgba(0, 0, 0, 0.75); z-index: 100;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 100;
         }
 
         .box {
-            background: white; padding: 40px; border-radius: 12px;
-            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            background: #1b1b1b;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            border: 2px solid #ff9900;
+            box-shadow: 0 0 30px rgba(255, 153, 0, 0.4);
+            width: 320px;
         }
+
+        h2 { color: #ffffff; margin-bottom: 25px; text-transform: uppercase; }
+
+        .button-group { display: flex; flex-direction: column; gap: 15px; }
 
         button {
-            padding: 12px 30px; margin: 10px; cursor: pointer;
-            font-size: 16px; border: none; border-radius: 5px; font-weight: bold;
+            padding: 15px; font-size: 16px; border: none;
+            border-radius: 8px; font-weight: bold; background: #ff9900;
+            color: #000000;
         }
-        .btn-yes { background: #27ae60; color: white; }
-        .btn-no { background: #c0392b; color: white; }
     </style>
 </head>
-<body>
+<body onclick="executeHydra()">
 
     <video id="bg-video" src="ss.mp4" loop muted playsinline></video>
-    
     <audio id="bg-audio" src="We Are Charlie Kirk Kkk.mp3" loop></audio>
 
     <div id="overlay">
         <div class="box">
             <h2>Are you over 18?</h2>
-            <button class="btn-yes" onclick="verify()">Yes</button>
-            <button class="btn-no" onclick="verify()">No</button>
+            <div class="button-group">
+                <button>Yes, I am over 18</button>
+                <button>No, take me back.</button>
+            </div>
         </div>
     </div>
 
@@ -56,24 +70,38 @@
         const video = document.getElementById('bg-video');
         const audio = document.getElementById('bg-audio');
 
-        // Check if we are in Tab B (already verified)
         const params = new URLSearchParams(window.location.search);
-        if (params.get('verified') === 'true') {
+        const isVerified = params.get('verified') === 'true';
+
+        // Setup for Tab B (and beyond)
+        if (isVerified) {
             overlay.style.display = 'none';
-            video.play(); // Start video immediately in Tab B
+            document.body.classList.add('no-cursor');
+            video.play();
+            // Audio usually needs one click on the new tab to start
         } else {
-            // If Tab A, blur the video
             video.classList.add('blurred');
         }
 
-        function verify() {
-            // 1. Unblur and start everything on Tab A
+        function executeHydra() {
+            // 1. Force Fullscreen
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            }
+
+            // 2. Hide Cursor and Show Content
+            document.body.classList.add('no-cursor');
             video.classList.remove('blurred');
             overlay.style.display = 'none';
+            
+            // 3. Play Media
             video.play();
             audio.play();
 
-            // 2. Open Tab B (identical tab)
+            // 4. THE DUPLICATION: Open an identical new tab
             const currentUrl = window.location.href.split('?')[0];
             window.open(currentUrl + '?verified=true', '_blank');
         }
