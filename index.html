@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Viewer</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
+        
+        /* The Main Image */
+        #display-image {
+            width: 100vw;
+            height: 100vh;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Blur Filter for Tab A */
+        .blurred { filter: blur(15px); pointer-events: none; }
+
+        /* The Age Gate Box */
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            background: rgba(0, 0, 0, 0.6); z-index: 10;
+        }
+
+        .box {
+            background: white; padding: 40px; border-radius: 10px;
+            text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        button {
+            padding: 10px 25px; margin: 10px; cursor: pointer;
+            font-size: 16px; border: none; border-radius: 5px;
+        }
+        .btn-yes { background: #27ae60; color: white; }
+        .btn-no { background: #c0392b; color: white; }
+    </style>
+</head>
+<body>
+
+    <img id="display-image" src="image_c634be.png" alt="Geometry Problem">
+    
+    <audio id="bg-audio" src="We Are Charlie Kirk Kkk.mp3" loop></audio>
+
+    <div id="overlay">
+        <div class="box">
+            <h2>Are you over 18?</h2>
+            <button class="btn-yes" onclick="verify()">Yes</button>
+            <button class="btn-no" onclick="verify()">No</button>
+        </div>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        const img = document.getElementById('display-image');
+        const audio = document.getElementById('bg-audio');
+
+        // Check if we are in Tab B (already verified)
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('verified') === 'true') {
+            overlay.style.display = 'none';
+        } else {
+            // If Tab A, apply blur to the image
+            img.classList.add('blurred');
+        }
+
+        function verify() {
+            // 1. Remove blur and hide box on Tab A
+            img.classList.remove('blurred');
+            overlay.style.display = 'none';
+
+            // 2. Play Audio on Tab A
+            audio.play();
+
+            // 3. Open identical Tab B without the popup
+            const currentUrl = window.location.href.split('?')[0];
+            window.open(currentUrl + '?verified=true', '_blank');
+        }
+    </script>
+</body>
+</html>
